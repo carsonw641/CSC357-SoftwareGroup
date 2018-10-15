@@ -1,9 +1,19 @@
 import tkinter as tk
-from tkinter import filedialog
 from tkinter import *
+from tkinter import filedialog
+from PIL import ImageTk, Image
+from os import walk
 
 onGreen = '#%02x%02x%02x' % (64, 255, 16)
 offGray = '#%02x%02x%02x' % (64, 48, 32)
+
+def populateUsers(self):
+    f = []
+    for (dirpath, dirnames, filenames) in walk('.\\venv\\faces\\'):
+        f.extend(dirnames)
+        break
+    for item in f:
+        self.list.insert(END, item)
 
 class testApp:
 
@@ -11,13 +21,8 @@ class testApp:
         self.master = master
         master.title("Test")
         self.createWidgets(master)
-
         self.indicator.create_rectangle(2,2,33,33, fill=offGray)
-        self.tmpImage.create_rectangle(2,2,193,49, fill='red')
-        for item in ['Bob', 'Jane', 'Jake', 'Ragnar', 'Sarah']:
-            self.list.insert(END, item)
-        for num in range(0, 100):
-            self.list.insert(END, num)
+        populateUsers(self)
 
     def start(self):
         self.indicator.create_rectangle(2,2,33,33, fill=onGreen)
@@ -66,12 +71,12 @@ class testApp:
         self.stopButton = Button(master, font=('', 14), text='Stop', state=DISABLED, command=self.stop)
         self.stopButton.grid(column=1, row=7)
 
-        self.title = Label(master, text='<PROG NAME>\nCSC357 2018')
+        self.title = Label(master, text='Face Recognition Lock\nCSC357 2018')
         self.title.grid(column=0, row=2, columnspan=2)
 
-        #row 3 for image
-        self.tmpImage = Canvas(master, width=192, height=48)
-        self.tmpImage.grid(column=0, row=3, columnspan=2)
+        self.img = ImageTk.PhotoImage(Image.open('.\\logo.png'))
+        self.logo = Label(master, image=self.img, width=192, height=48)
+        self.logo.grid(column=0, row=3, columnspan=2)
 
         self.credit_column_1 = Label(master, text='Amy Dixon\nCarson Williams\nJerry Malcomson')
         self.credit_column_1.grid(column=0, row=4)
