@@ -8,15 +8,15 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn import svm
 
-def designAlgorithm (gammaLevel, componentCount):
+def designAlgorithm ():
     X_train = []
     X_test = []
     y_train = []
     y_test = []
     
     trainingSplit = .75
-    #n_components = 20
-    n_components = componentCount
+    n_components = 14
+    #n_components = componentCount
 
     root_dir = './Faces'
     
@@ -94,28 +94,28 @@ def designAlgorithm (gammaLevel, componentCount):
     X_test_pca = pca.transform(X_test)
 
     C=1.0
-    #clf = svm.SVC(kernel='rbf', gamma=1, C=C)
-    clf = svm.SVC(kernel='rbf', gamma=gammaLevel, C=C)
+    clf = svm.SVC(kernel='rbf', gamma=0.15000000000000002, C=C)
+    #clf = svm.SVC(kernel='rbf', gamma=gammaLevel, C=C)
     clf.fit(X_train_pca, y_train)
 
 
     y_pred = clf.predict(X_test_pca)
 
-    score = 0.0
+    #score = 0.0
     for i in range(len(y_test)):
         print("Expected:"+str(y_test[i])+" Prediction:"+str(y_pred[i]))
-        if (y_test[i] == y_pred[i]):
-            score += 1
-        elif (y_test[i] > 0 and y_pred[i] == 0):
-            score +=.5
+      #  if (y_test[i] == y_pred[i]):
+       #     score += 1
+       # elif (y_test[i] > 0 and y_pred[i] == 0):
+        #    score +=.5
         
 
 
-    # with open('./algoSave', 'wb') as f:
-    #     pickle.dump(clf, f)
-    # with open('./pca', 'wb') as f:
-    #     pickle.dump(pca, f)
-    return score
+    with open('./algoSave', 'wb') as f:
+        pickle.dump(clf, f)
+    with open('./pca', 'wb') as f:
+        pickle.dump(pca, f)
+    #return score
 
 def defineUser(img):
     X = []
@@ -162,29 +162,29 @@ def detect(path):
     video_cap.release()
  
 def liveCamera():
-    cascadeFilePath="./lib/python3.6/site-packages/cv2/data/haarcascade_frontalface_alt.xml"
+    cascadeFilePath="haarcascade_frontalface_alt.xml"
     detect(cascadeFilePath)
     cv2.destroyAllWindows()
 
 #gamma = 0.05
 #n_components = 40
 
-max_score = 0.0
-perfect_pairs = []
+#max_score = 0.0
+#perfect_pairs = []
 
-for gamma in range(1, 200, 1):
-    for components in range(1, 40):
-        score = designAlgorithm (.05*gamma, components)  
-        if (score == 30):
-            perfect_pairs.append((.05*gamma,components))
-        if (score > max_score):
-            max_score = score
+#for gamma in range(1, 200, 1):
+ #   for components in range(1, 40):
+ #       score = designAlgorithm (.05*gamma, components)  
+ #       if (score == 30):
+ #           perfect_pairs.append((.05*gamma,components))
+ #       if (score > max_score):
+ #           max_score = score
 
 
-for i in perfect_pairs:
-    print(i)
+#for i in perfect_pairs:
+ #   print(i)
 
-print(max_score)
+#print(max_score)
 
-#designAlgorithm()
+designAlgorithm()
 #liveCamera()
