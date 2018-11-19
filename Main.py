@@ -8,15 +8,16 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn import svm
 
-def designAlgorithm (gammaLevel, componentCount):
+def designAlgorithm (path):
+    face_detection = cv2.CascadeClassifier(path)
+    
     X_train = []
     X_test = []
     y_train = []
     y_test = []
     
     trainingSplit = .75
-    #n_components = 20
-    n_components = componentCount
+    n_components = 14
 
     root_dir = './Faces'
     
@@ -40,10 +41,17 @@ def designAlgorithm (gammaLevel, componentCount):
                 #original photo dataset, then grayscale each of them
                 
                 img = cv2.imread(os.path.join(directory, file))
-                if y_value > 0:
-                    img = cv2.resize(img, (250,250))
                 
                 img = cv2.cvtColor(img ,cv2.COLOR_BGR2GRAY)
+                face = face_detection.detectMultiScale(img, 1.3, 5)
+                for (x,y,w,h) in face:
+                    img = img[y:y+h, x:x+w]
+                # cv2.imshow("cropped", img)
+                # cv2.waitKey(0)
+                img = cv2.resize(img, (250,250))
+                cv2.imshow("cropped", img)
+                cv2.waitKey(0)
+
                 if len(images) != 0:
                     indexLocation = random.randint(0, len(images)) % len(images)
                 else:
@@ -94,28 +102,19 @@ def designAlgorithm (gammaLevel, componentCount):
     X_test_pca = pca.transform(X_test)
 
     C=1.0
-    #clf = svm.SVC(kernel='rbf', gamma=1, C=C)
-    clf = svm.SVC(kernel='rbf', gamma=gammaLevel, C=C)
+    clf = svm.SVC(kernel='rbf', gamma=.15, C=C)
     clf.fit(X_train_pca, y_train)
 
 
     y_pred = clf.predict(X_test_pca)
 
-    score = 0.0
     for i in range(len(y_test)):
         print("Expected:"+str(y_test[i])+" Prediction:"+str(y_pred[i]))
-        if (y_test[i] == y_pred[i]):
-            score += 1
-        elif (y_test[i] > 0 and y_pred[i] == 0):
-            score +=.5
-        
-
-
-    # with open('./algoSave', 'wb') as f:
-    #     pickle.dump(clf, f)
-    # with open('./pca', 'wb') as f:
-    #     pickle.dump(pca, f)
-    return score
+             
+    with open('./algoSave', 'wb') as f:
+        pickle.dump(clf, f)
+    with open('./pca', 'wb') as f:
+        pickle.dump(pca, f)
 
 def defineUser(img):
     X = []
@@ -166,25 +165,8 @@ def liveCamera():
     detect(cascadeFilePath)
     cv2.destroyAllWindows()
 
-#gamma = 0.05
-#n_components = 40
 
-max_score = 0.0
-perfect_pairs = []
-
-for gamma in range(1, 200, 1):
-    for components in range(1, 40):
-        score = designAlgorithm (.05*gamma, components)  
-        if (score == 30):
-            perfect_pairs.append((.05*gamma,components))
-        if (score > max_score):
-            max_score = score
-
-
-for i in perfect_pairs:
-    print(i)
-
-print(max_score)
-
-#designAlgorithm()
+cascadeFilePath="./lib/python3.6/site-packages/cv2/data/haarcascade_frontalface_alt.xml"
+designAlgorithm(cascadeFilePath)
+cv2.destroyAllWindows()
 #liveCamera()
