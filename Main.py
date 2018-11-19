@@ -102,7 +102,7 @@ def designAlgorithm (path):
     X_test_pca = pca.transform(X_test)
 
     C=1.0
-    clf = svm.SVC(kernel='rbf', gamma=.15, C=C)
+    clf = svm.SVC(kernel='rbf', gamma=0.15000000000000002, C=C)
     clf.fit(X_train_pca, y_train)
 
 
@@ -161,7 +161,7 @@ def detect(path):
     video_cap.release()
  
 def liveCamera():
-    cascadeFilePath="./lib/python3.6/site-packages/cv2/data/haarcascade_frontalface_alt.xml"
+    cascadeFilePath="haarcascade_frontalface_alt.xml"
     detect(cascadeFilePath)
     cv2.destroyAllWindows()
 
