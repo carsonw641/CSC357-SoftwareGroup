@@ -134,7 +134,6 @@ def defineUser(img):
     else:
         print("Unauthorized User")
 
-
 def detect(path):
     scale_factor = 1.2
     min_neighbors = 3
@@ -161,7 +160,6 @@ def liveCamera():
     cascadeFilePath="haarcascade_frontalface_alt.xml"
     detect(cascadeFilePath)
     cv2.destroyAllWindows()
-
 
 cascadeFilePath="./lib/python3.6/site-packages/cv2/data/haarcascade_frontalface_alt.xml"
 designAlgorithm(cascadeFilePath)
