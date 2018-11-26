@@ -46,12 +46,9 @@ def designAlgorithm (path):
                 face = face_detection.detectMultiScale(img, 1.3, 5)
                 for (x,y,w,h) in face:
                     img = img[y:y+h, x:x+w]
-                # cv2.imshow("cropped", img)
-                # cv2.waitKey(0)
+             
                 img = cv2.resize(img, (250,250))
-                cv2.imshow("cropped", img)
-                cv2.waitKey(0)
-
+                
                 if len(images) != 0:
                     indexLocation = random.randint(0, len(images)) % len(images)
                 else:
@@ -168,5 +165,4 @@ def liveCamera():
 
 cascadeFilePath="./lib/python3.6/site-packages/cv2/data/haarcascade_frontalface_alt.xml"
 designAlgorithm(cascadeFilePath)
-cv2.destroyAllWindows()
 #liveCamera()
