@@ -4,9 +4,12 @@ import random
 import math
 import pickle
 import time
+import serial
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn import svm
+
+arduino = serial.Serial('/dev/ttyACM0', 9600, timeout = .1)
 
 def designAlgorithm (path):
     face_detection = cv2.CascadeClassifier(path)
@@ -101,7 +104,7 @@ def designAlgorithm (path):
     C=1.0
     #clf = svm.SVC(kernel='rbf', gamma=.1, C=C)
 
-    clf = svm.SVC(kernel='rbf', gamma=0.15000000000000002, C=C)
+    clf = svm.SVC(kernel='rbf', gamma=1.000000000000002, C=C)
     clf.fit(X_train_pca, y_train)
 
 
@@ -140,6 +143,7 @@ def defineUser(img, path):
 
     if (predictedValue > 0):
         print("Authorized User")
+        acceptUser()
     else:
         print("Unauthorized User")
 
@@ -165,11 +169,18 @@ def detect(path):
                 break
     video_cap.release()
  
+def acceptUser():
+    arduino.write(b'2');
+    arduino.write(b'1');
+
+def denyUser():
+    arduino.write(b'0');
+
 def liveCamera():
     cascadeFilePath="haarcascade_frontalface_alt.xml"
     detect(cascadeFilePath)
     cv2.destroyAllWindows()
 
 cascadeFilePath="./lib/python3.6/site-packages/cv2/data/haarcascade_frontalface_alt.xml"
-#designAlgorithm(cascadeFilePath)
+designAlgorithm(cascadeFilePath)
 liveCamera()
