@@ -18,7 +18,7 @@ def designAlgorithm (path):
     
     trainingSplit = .75
     n_components = 14
-
+    #n_components = 20
     root_dir = './Faces'
     
     #This is just to differentiate the control faces which have a value of 0
@@ -99,6 +99,8 @@ def designAlgorithm (path):
     X_test_pca = pca.transform(X_test)
 
     C=1.0
+    #clf = svm.SVC(kernel='rbf', gamma=.1, C=C)
+
     clf = svm.SVC(kernel='rbf', gamma=0.15000000000000002, C=C)
     clf.fit(X_train_pca, y_train)
 
@@ -113,13 +115,20 @@ def designAlgorithm (path):
     with open('./pca', 'wb') as f:
         pickle.dump(pca, f)
 
-def defineUser(img):
+def defineUser(img, path):
+    face_detection = cv2.CascadeClassifier(path)
     X = []
     clf = pickle.load(open('./algoSave', 'rb'))
     pca = pickle.load(open('./pca', 'rb'))
 
     img = cv2.resize(img, (250,250))
     img = cv2.cvtColor(img ,cv2.COLOR_BGR2GRAY)
+
+    face = face_detection.detectMultiScale(img, 1.3, 5)
+    for (x,y,w,h) in face:
+        img = img[y:y+h, x:x+w]
+    img = cv2.resize(img, (250,250))
+
     X.append(img)
     
     X = np.array(X)
@@ -152,7 +161,7 @@ def detect(path):
             cv2.imshow('Face Detection on Video', img)
 
             if cv2.waitKey(1) & 0xFF == ord('c'):
-                defineUser(img)
+                defineUser(img, path)
                 break
     video_cap.release()
  
@@ -162,5 +171,5 @@ def liveCamera():
     cv2.destroyAllWindows()
 
 cascadeFilePath="./lib/python3.6/site-packages/cv2/data/haarcascade_frontalface_alt.xml"
-designAlgorithm(cascadeFilePath)
-#liveCamera()
+#designAlgorithm(cascadeFilePath)
+liveCamera()
